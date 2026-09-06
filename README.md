@@ -37,7 +37,27 @@ NumPy, scikit-learn, XGBoost, LightGBM, and the plotting dependencies
 installed. The notebook currently installs LightGBM at runtime; pin all
 dependencies before reproducing the analysis.
 
-## Reproducibility and safety
+## Security and privacy
+
+The repository audit found one high-confidence issue: at
+`stellar_classification.ipynb:525`, the notebook runs
+`!pip install lightgbm -q` without an exact version, artifact hash, dependency
+lockfile, or explicitly trusted package source. This creates supply-chain and
+reproducibility risk because a mutable or compromised package release could
+execute with the notebook kernel's access to local files, environment
+variables, and loaded data. Use a pinned environment specification or lockfile,
+pin exact package versions, and verify hashes from a trusted HTTPS package
+index. If installation remains in the notebook, pin LightGBM and use
+hash-verified artifacts.
+
+The audit found no high-confidence hardcoded credentials, API keys, private
+keys, notebook output leaks, sensitive metadata, insecure HTTP downloads,
+unsafe deserialization, `eval`/`exec`, or tracked dataset exposure. The source
+dataset is excluded from version control. Keep datasets and sensitive derived
+artifacts outside Git, and do not embed local paths, environment values,
+credentials, or raw records in notebooks or exported files.
+
+## Reproducibility and limitations
 
 The reported metrics come from a single stratified holdout and cross-validation
 experiments, so they are estimates for this dataset rather than guarantees of
@@ -46,6 +66,5 @@ binary reframing experiments and comparisons with public work; those details
 are documented in the report and notebook rather than presented as a separate
 production pipeline here.
 
-See [`SECURITY-REVIEW.md`](SECURITY-REVIEW.md) for the dependency supply-chain
-and reproducibility finding. Do not commit source datasets, credentials, local
-paths, or notebook outputs containing sensitive records.
+Before reproducing the analysis, run it in a clean environment from a pinned
+dependency specification and record the toolchain versions used.
